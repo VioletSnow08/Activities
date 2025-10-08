@@ -47,7 +47,7 @@
       "if": {
         "privacy": false
       },
-      "value": false
+      "value": true
     },
     {
       "id": "cover",
