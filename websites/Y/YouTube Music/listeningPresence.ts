@@ -38,7 +38,7 @@ export function createListeningPresence(
   const presenceData: PresenceData = {
     type: ActivityType.Listening,
     name: showAsListening
-      ? mediaData.title
+      ? `${mediaData.title} - ${mediaData.artist}`
       : 'YouTube Music',
     largeImageKey: showCover
       ? mediaData.artwork ?? ActivityAssets.Logo
