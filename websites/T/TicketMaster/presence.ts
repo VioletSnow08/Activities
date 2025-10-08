@@ -14,19 +14,13 @@ presence.on('UpdateData', async () => {
   // Create the base presence data
   const presenceData: PresenceData = {
     largeImageKey: ActivityAssets.Logo, // Direct URL to the logo image
-    details: 'Looking at tickets... (DEV)',
     startTimestamp: browsingTimestamp, // Show elapsed time
+    name: 'TicketMaster',
   }
 
   // Update the state based on the current page
   if (pathname === '/') {
     presenceData.state = 'Homepage'
-  }
-  else if (pathname.includes('/about')) {
-    presenceData.state = 'Reading about us'
-  }
-  else if (pathname.includes('/contact')) {
-    presenceData.state = 'Contacting us'
   } // Check for /*/artist/*
   else if (pathname.match(/\/.*\/artist\/.*/)) {
     // Get artist name .sc-c358f15d-6 h1 & trim "Tickets" from the end
@@ -49,11 +43,45 @@ presence.on('UpdateData', async () => {
       artistName = event?.split(' - ')[0]?.trim()
       eventName = event?.trim()
     }
-    presenceData.name = 'Looking at tickets [DEV]'
-    presenceData.state = `${formattedDateTime} at ${venue}`
-    presenceData.details = eventName || 'Unknown Event'
+    presenceData.name = 'Looking at tickets'
+    presenceData.state = `${venue}`
+    presenceData.details = eventName || event || 'Unknown event'
   }
-
+  else if // /discover/concerts*
+  (pathname.startsWith('/discover/concerts')) {
+    presenceData.name = 'Browsing concerts'
+    const genre = document.querySelector('h1.sc-7b709fac-2')?.textContent.trim() || 'Unknown genre'
+    presenceData.state = `Genre: ${genre}`
+  }
+  else if // /*/venue/*
+  (pathname.match(/\/.*\/venue\/.*/)) {
+    // Remove "Tickets" from the end of the venue name
+    const venueName = document.querySelector('h1.sc-172c0ccf-0')?.textContent.replace(/\s*Tickets\s*$/, '').trim()
+    const venueAddress = document.querySelector('p.sc-880cecb5-8')?.textContent.trim() || 'Unknown address'
+    presenceData.name = venueName ? `Viewing ${venueName}` : 'Viewing a venue'
+    presenceData.state = venueAddress
+  }
+  else if // /user/orders
+  (pathname === '/user/orders') {
+    presenceData.state = 'Viewing upcoming events'
+  }
+  else if // /user/orders/past-events
+  (pathname === '/user/orders/past-events') {
+    presenceData.state = 'Viewing past events'
+  }
+  else if // /user/*
+  (pathname.match(/\/user\/.*/)) {
+    presenceData.state = 'Managing account'
+  }
+  else if // my.ticketmaster.com/order/* {
+  (pathname.match(/\/order\/.*/)) {
+    const eventName = document.querySelector('h1.styles__eventOverview--Zvv9_')?.textContent.trim()
+    presenceData.state = 'Viewing an order'
+    presenceData.details = eventName ? `${eventName}` : 'Unknown event'
+  }
+  else {
+    presenceData.state = 'Browsing'
+  }
   // Set the activity
   if (presenceData.state) {
     presence.setActivity(presenceData)
