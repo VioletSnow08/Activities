@@ -4,7 +4,7 @@ const presence = new Presence({
 const browsingTimestamp = Math.floor(Date.now() / 1000) // Show elapsed time
 
 enum ActivityAssets {
-  Logo = 'https://example.com/logo.png',
+  Logo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6VKQefJN4p3waOkncpkzqurSSzxv7blZJ_w&s',
 }
 
 presence.on('UpdateData', async () => {
@@ -32,7 +32,27 @@ presence.on('UpdateData', async () => {
     // Get artist name .sc-c358f15d-6 h1 & trim "Tickets" from the end
     const artistName = document.querySelector('h1.sc-c358f15d-6')?.textContent.replace(/\s*Tickets\s*$/, '').trim()
     presenceData.state = artistName ? `Viewing ${artistName}` : 'Viewing an artist'
-  } // Check for /*/venue/*
+  } // Check for /*/event/*
+  else if (pathname.match(/\/.*\/event\/.*/)) {
+    // Get full event name from .sc-43d02e8c-4 h1
+    const event = document.querySelector('h1.sc-4ed02e8c-4')?.textContent.trim()
+    const datetime = document.querySelector('span.sc-42f87f01-0')?.textContent.trim() || 'Unknown date'
+    const cleanDateTimeString = datetime.replace(/•/g, '').replace(/\s+/g, ' ').trim()
+    const cleanDateTime = new Date(cleanDateTimeString)
+    const formattedDateTime = `${cleanDateTime.getMonth() + 1}/${cleanDateTime.getDate()}/${cleanDateTime.getFullYear()}`
+    const venue = document.querySelector('span.sc-9e564310-0 a')?.textContent.trim() || 'Unknown venue'
+    let artistName
+    let eventName
+
+    if (event && event.includes (' - ')) {
+      // Split by "-" and take the first part
+      artistName = event?.split(' - ')[0]?.trim()
+      eventName = event?.trim()
+    }
+    presenceData.name = 'Looking at tickets [DEV]'
+    presenceData.state = `${formattedDateTime} at ${venue}`
+    presenceData.details = eventName || 'Unknown Event'
+  }
 
   // Set the activity
   if (presenceData.state) {
