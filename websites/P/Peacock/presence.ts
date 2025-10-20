@@ -16,7 +16,7 @@ presence.on('UpdateData', async () => {
   let extra = '...'
 
   const path = window.location.pathname
-  const presenceData: PresenceData = {
+  let presenceData: PresenceData = {
     largeImageKey: 'https://cdn.rcd.gg/PreMiD/websites/P/Peacock/assets/logo.png',
     startTimestamp: elapsed,
     type: ActivityType.Watching,
@@ -65,6 +65,7 @@ presence.on('UpdateData', async () => {
 
       if (title) {
         presenceData.details = title.textContent
+        presenceData.name = title.textContent
         if (path.includes('/watch/playback/playlist'))
           presenceData.details += ' Playlist'
       }

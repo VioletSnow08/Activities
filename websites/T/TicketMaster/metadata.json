@@ -9,7 +9,7 @@
   "description": {
     "en": "TODO"
   },
-  "url": ["www.ticketmaster.com", "my.ticketmaster.com"],
+  "url": ["www.ticketmaster.com", "my.ticketmaster.com", "queue.ticketmaster.com"],
   "version": "1.0.0",
   "logo": "https://i.imgur.com/000000.png",
   "thumbnail": "https://i.imgur.com/000000.png",
