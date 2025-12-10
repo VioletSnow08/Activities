@@ -1,39 +1,55 @@
 import { ActivityType, Assets } from 'premid'
 
+declare const Presence: any
+
 const presence = new Presence({
   clientId: '1426317236846465196',
 })
 const browsingTimestamp = Math.floor(Date.now() / 1000)
 
-enum ActivityAssets { // Other default assets can be found at index.d.ts
+enum ActivityAssets {
   Logo = '',
 }
 
-presence.on('UpdateData', async () => {
-  const presenceData: PresenceData = {
-    largeImageKey: ActivityAssets.Logo,
-    startTimestamp: browsingTimestamp,
-    smallImageKey: Assets.Play,
-    type: ActivityType.Listening,
+const UPDATE_INTERVAL = 1200
+let lastUpdate = 0
 
+presence.on('UpdateData', async () => {
+  if (Date.now() - lastUpdate < UPDATE_INTERVAL)
+    return
+  lastUpdate = Date.now()
+
+  const state = document.querySelector('[data-testid="control-button-playpause"]')?.ariaLabel
+  if (state !== 'Pause') {
+    presence.clearActivity() // nothing is playing
+    return
   }
 
-  if (document.location.pathname === '/') { // On the logged in homepage
-    // Check if there's a currently playing track
-    const state = document.querySelector('[data-testid="control-button-playpause"]')?.ariaLabel
-    if (state === 'Pause') { // If there's a pause button, something is playing
-      const widget = document.querySelector('[data-testid="now-playing-widget"]')
+  const widget = document.querySelector('[data-testid="now-playing-widget"]')
+  if (!widget) {
+    presence.clearActivity() // widget not found
+    return
+  }
 
-      const song = widget?.querySelector('[data-testid="context-item-info-title"] a')?.textContent.trim()
-      const artist = widget?.querySelector('[data-testid="context-item-info-artist"]')?.textContent.trim()
-      const cover = (widget?.querySelector('[data-testid="cover-art-image"]') as HTMLImageElement | null)?.src ?? ''
+  const song = widget?.querySelector('[data-testid="context-item-info-title"] a')?.textContent?.trim()
+    || widget?.querySelector('.track-info__name a')?.textContent?.trim()
+  const artist = widget?.querySelector('[data-testid="context-item-info-artist"]')?.textContent?.trim()
+    || widget?.querySelector('.track-info__artists a')?.textContent?.trim()
+  const cover = (widget?.querySelector('[data-testid="cover-art-image"]') as HTMLImageElement | null)?.src ?? ''
 
-      presenceData.name = song && artist ? `${song} - ${artist}` : 'music'
-      presenceData.state = artist || 'Unknown artist'
-      presenceData.details = song || 'Unknown track'
-      presenceData.largeImageKey = cover || ActivityAssets.Logo
-      presenceData.smallImageKey = Assets.Play
-    }
+  if (!song && !artist) {
+    presence.clearActivity() // no valid track info
+    return
+  }
+
+  const presenceData: any = {
+    type: ActivityType.Listening,
+    largeImageKey: cover || ActivityAssets.Logo,
+    smallImageKey: Assets.Play,
+    startTimestamp: browsingTimestamp,
+    name: song && artist ? `${song} - ${artist}` : 'music',
+    details: song || 'Unknown track',
+    state: artist || 'Unknown artist',
   }
 
   presence.setActivity(presenceData)
