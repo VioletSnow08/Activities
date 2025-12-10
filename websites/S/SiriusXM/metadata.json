@@ -17,10 +17,9 @@
     "nl": "SiriusXM is iets wat je nog nooit gehoord hebt - het is een hele nieuwe wereld van radio. Stel je kanalen en kanalen voor van alles waar je naar wilt luisteren."
   },
   "url": [
-    "player.siriusxm.com",
-    "player.siriusxm.ca"
+    "www.siriusxm.com"
   ],
-  "version": "1.2.21",
+  "version": "1.2.20",
   "logo": "https://cdn.rcd.gg/PreMiD/websites/S/SiriusXM/assets/logo.jpg",
   "thumbnail": "https://cdn.rcd.gg/PreMiD/websites/S/SiriusXM/assets/thumbnail.png",
   "color": "#0081FF",
