@@ -6,7 +6,7 @@ const presence = new Presence({
 const browsingTimestamp = Math.floor(Date.now() / 1000)
 
 enum ActivityAssets { // Other default assets can be found at index.d.ts
-  Logo = '',
+  Logo = 'https://cdn.brandfetch.io/id4hdoIs3P/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1760765872712',
 }
 
 presence.on('UpdateData', async () => {
@@ -14,7 +14,7 @@ presence.on('UpdateData', async () => {
     largeImageKey: ActivityAssets.Logo,
     startTimestamp: browsingTimestamp,
     smallImageKey: Assets.Play,
-    name: 'Developing an activity...',
+    name: 'Sephora',
   }
 
   // Name = Discord status // bold line
