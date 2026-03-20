@@ -44,9 +44,13 @@ presence.on('UpdateData', async () => {
     const video = document.querySelector<HTMLVideoElement>(
       '.video-player-component video',
     )
+      || document.querySelector<HTMLVideoElement>('[data-testid="video-player"] video')
+      || document.querySelector<HTMLVideoElement>('video')
     if (video) {
       const title = document.querySelector('.playback-header__title')
         || document.querySelector('.playback-metadata__container-title')
+        || document.querySelector('[data-testid="metadata-title"]')
+        || document.querySelector('[data-testid="header-title"]')
       const timestamps = presence.getTimestamps(
         Math.floor(video.currentTime),
         Math.floor(video.duration),

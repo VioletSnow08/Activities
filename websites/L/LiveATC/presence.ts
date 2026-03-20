@@ -49,6 +49,7 @@ presence.on('UpdateData', async () => {
             .textContent
             ?.split(' - ')
 
+          presenceData.name = "LiveATC | " + radioInfo?.[0]
           presenceData.details = radioInfo?.[0]
           presenceData.state = radioInfo?.[1]
           presenceData.largeImageText = document
