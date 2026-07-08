@@ -1,3 +1,5 @@
+import { ActivityType, Assets } from 'premid'
+
 const presence = new Presence({
   clientId: '503557087041683458',
 })
@@ -6,87 +8,61 @@ presence.on('UpdateData', async () => {
   const presenceData: PresenceData = {
     largeImageKey: 'https://cdn.rcd.gg/PreMiD/websites/S/SiriusXM/assets/logo.jpg',
     name: 'SiriusXM',
+    type: ActivityType.Listening,
   }
 
   switch (document.location.pathname) {
-    case '/home/foryou': {
-      presenceData.details = 'Viewing SiriusXM Home'
+    case '/player/home':
+      presenceData.details = 'Listening to SiriusXM'
       break
-    }
-    case '/home/music': {
-      presenceData.details = 'Viewing Music Home'
+    case document.location.pathname.match(/^\/player\/curated-grouping/)?.input: // startswith /player/curated-grouping
+      presenceData.details = 'Browsing Channels'
       break
-    }
-    case '/home/sports': {
-      presenceData.details = 'Viewing Sports Home'
+    case '/player/search':
+      presenceData.details = 'Searching'
       break
-    }
-    case '/home/news': {
-      presenceData.details = 'Viewing News Home'
+    case '/player/my-library':
+      presenceData.details = 'Browsing My Library'
       break
-    }
-    case '/home/entertainment': {
-      presenceData.details = 'Viewing Talk Home'
+    case document.location.pathname.match(/^\/player\/channel-linear/)?.input: // startswith /player/channel-linear
+      presenceData.details = 'Browsing Channel'
+      // Get div .entity-header-title then span inside it
+      const channelTitle = document.querySelector('[data-qa="entity-header-title"] span')?.textContent
+      // Get data-qa=entity-header-subtitle span textContent
+      const channelNumber = document.querySelector('[data-qa="entity-header-subtitle"] span')?.textContent
+      presenceData.state = channelNumber
+      presenceData.details = channelTitle ? `Browsing ${channelTitle}` : 'Browing Channel'
       break
-    }
-    case '/home/howard': {
-      presenceData.details = 'Viewing Howard Stern Home'
-      break
-    }
-    case '/favorites/channels': {
-      presenceData.details = 'Viewing Favorite Channels'
-      break
-    }
-    case '/favorites/shows': {
-      presenceData.details = 'Viewing Favorite Shows'
-      break
-    }
-    case '/favorites/episodes': {
-      presenceData.details = 'Viewing Favorite Episodes'
-      break
-    }
-    case '/recently-played': {
-      presenceData.details = 'Viewing Recently Played Stations'
-      break
-    }
-    case '/query': {
-      presenceData.details = 'Searching SiriusXM'
-      break
-    }
-    default:
-      if (document.location.pathname.includes('/query')) {
-        presenceData.details = 'Viewing: '
-        presenceData.state = document.querySelector<HTMLInputElement>(
-          '[name="searchText"]',
-        )?.value
-      }
-      else if (document.location.pathname.includes('/category-listing')) {
-        presenceData.details = 'Viewing Category: '
-        presenceData.state = document.querySelector(
-          'span.sxm-breadcrumb__text',
-        )?.textContent
-      }
-      else {
-        presenceData.details = 'Unknown page'
-      }
   }
 
-  if (document.querySelector('.sxm-player-controls.no-select')) {
-    const data = {
-      channel: document.querySelector('.channel-name')?.textContent,
-      track: document.querySelector('.track-name')?.textContent ?? 'Loading',
-      artist: document.querySelector('.artist-name')?.textContent ?? 'Loading',
+  // Get footer
+  const footer = document.getElementsByTagName('footer')[0]
+
+  // Find controls container (class changes hashes)
+  const controlsModule = footer?.querySelector('div[class*="controlsContainer"]')
+
+  // --- inside presence.on('UpdateData', async () => { ... }) ---
+
+  // Footer / controls / playbar code above remains the same ...
+
+  if (footer && controlsModule) {
+    const playbarInfo = footer.querySelector('div[class*="textWrapper"]')
+
+    if (playbarInfo) {
+      const trackRaw = playbarInfo.querySelector('[class*="title"] span')?.textContent?.trim() || ''
+      const channelRaw = playbarInfo.querySelector('div[class*="text"] span')?.textContent?.trim() || ''
+
+      // Split "Artist - Song"
+      const [artist, song] = trackRaw.split(/\s*-\s*/)
+
+      // Split "SiriusXM K-Pop · SiriusXM K-Pop" → ["SiriusXM K-Pop", "SiriusXM K-Pop"]
+      const [channelLine1, channelLine2] = channelRaw.split(/\s*·\s*/) //
+
+      // Keep details/state the same
+      presenceData.name = channelLine2 ? `${channelLine2} on SiriusXM` : 'SiriusXM'
+      presenceData.details = `${artist} - ${song}`
+      presenceData.state = channelRaw
     }
-
-    if (data.track === data.artist)
-      presenceData.details = data.track
-    else if (data.channel)
-      presenceData.details = `${data.track} - ${data.artist}`
-    else presenceData.details = data.track
-
-    if (data.channel)
-      presenceData.state = data.channel
-    else presenceData.state = data.artist
   }
 
   if (presenceData.details)

@@ -212,6 +212,9 @@ presence.on('UpdateData', async () => {
       endTimestamp,
     }
 
+    if (listening)
+      presenceData.name = title.trim()
+
     if (vidState.includes('{0}'))
       delete presenceData.state
 
