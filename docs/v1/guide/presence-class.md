@@ -55,7 +55,7 @@ The `PresenceData` object can have the following properties:
 | ------------------ | ------------------- | ------------------------------------------------------------------------------------------------------ |
 | `name`             | `string`            | The name of the activity                                                                               |
 | `type`             | `ActivityType`      | The type of activity                                                                                   |
-| `stateDisplayType` | `StatusDisplayType` | Controls which field is displayed in the user's status text in the member list                         |
+| `statusDisplayType` | `StatusDisplayType` | Controls which field is displayed in the user's status text in the member list                         |
 | `details`          | `string`            | The first line of the activity                                                                         |
 | `detailsUrl`       | `string`            | The URL the user will be redirected to when clicking the details text                                  |
 | `state`            | `string`            | The second line of the activity                                                                        |

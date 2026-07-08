@@ -98,6 +98,7 @@ The `StatusDisplayType` enum controls which field is displayed in the user's sta
 | `Name`    | Display the activity name | "Playing [name]"       |
 | `State`   | Display the state field   | "Listening to [state]" |
 | `Details` | Display the details field | "Watching [details]"   |
+| `SongArtist` | Display song and artist together (removed) | "Listening to [song] - [artist]" (removed) |
 
 ## Examples
 

@@ -45,6 +45,8 @@ export function createListeningPresence(
     state: mediaData.artist,
   }
 
+  const songArtistText = `${mediaData.title} - ${mediaData.artist}`
+
   if (settings.links) {
     presenceData.detailsUrl = `https://music.youtube.com/watch?v=${watchID}`
     if (albumArtistBtnLink) {
@@ -60,6 +62,10 @@ export function createListeningPresence(
       presenceData.statusDisplayType = StatusDisplayType.State
       break
     case 2:
+      presenceData.statusDisplayType = StatusDisplayType.Details
+      break
+    case 3:
+      presenceData.details = songArtistText
       presenceData.statusDisplayType = StatusDisplayType.Details
       break
   }
