@@ -1,5 +1,6 @@
 export * from './functions/getTimestamps.js'
 export * from './functions/getTimestampsFromMedia.js'
+export * from './functions/supports.js'
 export * from './functions/timestampFromFormat.js'
 
 /**
@@ -20,6 +21,10 @@ export enum ActivityType {
    * Playing {name}
    */
   Playing = 0,
+  /**
+   * Streaming {name}
+   */
+  Streaming = 1,
   /**
    * Listening to {name}
    */
